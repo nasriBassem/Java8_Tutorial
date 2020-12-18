@@ -1,13 +1,16 @@
 package org.javahuit.tuto;
 
 /**
- * Hello world!
+ * La classe main de l'application
+ * 
+ * @author bassem
  *
  */
-public class App 
-{
-    public static void main( String[] args )
-    {
-        System.out.println( "Hello World!" );
-    }
+public class App {
+	public static void main(String[] args) {
+		Application application = new Application();
+        application.init();
+        //application.readInput();
+
+	}
 }
