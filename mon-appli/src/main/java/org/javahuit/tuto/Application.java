@@ -4,8 +4,9 @@ import java.io.IOException;
 import java.net.URISyntaxException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Optional;
 import java.util.Set;
-import java.util.logging.Level;
+import java.util.function.Supplier;
 import java.util.logging.Logger;
 import java.util.stream.Stream;
 
@@ -32,53 +33,37 @@ public class Application {
 	 */
 	private static final String CSV_FILE = "product-data.csv";
 
-	public void init() {
+	public void init() throws URISyntaxException, IOException {
 		/**
-		 * Initialize welcome message
+		 * Parseuur des données
 		 */
-		printInstructions();
-
+		Parser<Set<Product>, Supplier<Stream<String>>> parser = new CSVFileParser();
 		/**
 		 * Reader pour lire le fichier des données
 		 */
 		Reader<Stream<String>, Path> reader = new CSVFileReader();
-		/**
-		 * Utilisation de try ressource introduced in Java 7
-		 */
+
 		/**
 		 * Lecture des données en input
 		 */
-		try (Stream<String> data = reader.read(Paths.get(ClassLoader.getSystemResource(CSV_FILE).toURI()))) {
+		Path pathFileInput = Paths.get(ClassLoader.getSystemResource(CSV_FILE).toURI());
+		Supplier<Stream<String>> streamSupplierData = () -> {
+			try {
+				return reader.read(pathFileInput);
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+			return null;
+		};
 
-			/**
-			 * Parseuur des données
-			 */
-			Parser<Set<Product>, Stream<String>> parser = new CSVFileParser();
-			/**
-			 * Récupération des donnéesen format Produit
-			 */
-			Set<Product> products = parser.parse(data);
-
-		} catch (URISyntaxException | IOException e) {
-			LOGGER.log(Level.SEVERE, e.getMessage());
-		}
-
+		/**
+		 * Récupération des donnéesen format Produit
+		 */
+		Set<Product> products = parser.parse(streamSupplierData);
 	}
 
 	public void readInput() {
 
-	}
-
-	/**
-	 * Initialize welcome message
-	 */
-	private void printInstructions() {
-		LOGGER.info("Enter \"list\" to show a list of products in the inventory");
-		LOGGER.info("Enter \"add <ProductId>\" to add to basket");
-		LOGGER.info("Enter \"remove <ProductId>\" to remove from basket");
-		LOGGER.info("Enter \"basket\" to show the list of products in your basket");
-		LOGGER.info("Enter \"total\" to show the total price of the basket");
-		LOGGER.info("Enter \"exit\" to quit");
 	}
 
 }

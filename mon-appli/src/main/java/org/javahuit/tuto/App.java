@@ -1,5 +1,8 @@
 package org.javahuit.tuto;
 
+import java.io.IOException;
+import java.net.URISyntaxException;
+
 /**
  * La classe main de l'application
  * 
@@ -7,7 +10,7 @@ package org.javahuit.tuto;
  *
  */
 public class App {
-	public static void main(String[] args) {
+	public static void main(String[] args) throws URISyntaxException, IOException {
 		Application application = new Application();
         application.init();
         //application.readInput();

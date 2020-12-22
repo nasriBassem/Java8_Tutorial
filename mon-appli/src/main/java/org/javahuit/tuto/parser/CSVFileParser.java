@@ -1,6 +1,7 @@
 package org.javahuit.tuto.parser;
 
 import java.util.Set;
+import java.util.function.Supplier;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
@@ -15,31 +16,24 @@ import org.javahuit.tuto.domain.Product;
  * @author bassem
  *
  */
-public class CSVFileParser implements Parser<Set<Product>, Stream<String>> {
+public class CSVFileParser implements Parser<Set<Product>, Supplier<Stream<String>>> {
 
 	private static final Logger LOGGER = Logger.getLogger(CSVFileParser.class.getName());
 	private static final String CSV_SEPARATOR = ",";
 
 	@Override
-	public Set<Product> parse(Stream<String> data) {
-		Set<Product> result = null;
-		if (data.count() > 0) {
-			Stream<Product> donnesStreamFormat = data.map(line -> {
+	public Set<Product> parse(Supplier<Stream<String>>  data) {
+		if (data != null) {
+			Set<Product> result = data.get().map(line -> {
 				return productBuilder(line.split(CSV_SEPARATOR));
-			});
-			/**
-			 * Conversion de Collection
-			 */
-			result = donnesStreamFormat.collect(Collectors.toSet());
-			/**
-			 * Supression des valeurs null
-			 */
+			}).collect(Collectors.toSet());
 			result.removeIf(p -> p == null);
+			return result;
+
 		} else {
 			LOGGER.log(Level.SEVERE, "Failed to parse a Null data");
+			return null;
 		}
-		return result;
-
 	}
 
 	/**
