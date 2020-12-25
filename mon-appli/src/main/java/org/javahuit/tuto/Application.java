@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.net.URISyntaxException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Optional;
 import java.util.Set;
 import java.util.function.Supplier;
 import java.util.logging.Logger;
@@ -15,6 +14,7 @@ import org.javahuit.tuto.parser.CSVFileParser;
 import org.javahuit.tuto.parser.Parser;
 import org.javahuit.tuto.reader.CSVFileReader;
 import org.javahuit.tuto.reader.Reader;
+import org.javahuit.tuto.shop.ShopService;
 
 /**
  * Configuration de l'application
@@ -32,6 +32,9 @@ public class Application {
 	 * Input des données = file name
 	 */
 	private static final String CSV_FILE = "product-data.csv";
+	
+    private ShopService service;
+
 
 	public void init() throws URISyntaxException, IOException {
 		/**
@@ -60,6 +63,9 @@ public class Application {
 		 * Récupération des donnéesen format Produit
 		 */
 		Set<Product> products = parser.parse(streamSupplierData);
+		
+        service = new ShopService();
+
 	}
 
 	public void readInput() {
